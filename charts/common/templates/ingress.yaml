@@ -1,0 +1,57 @@
+{{- if .Values.ingress.enabled -}}
+{{- $fullName := include "common.fullname" . -}}
+{{- $middlewares := list }}
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ $fullName }}
+  annotations:
+  {{- if eq .Values.ingress.controller "alb" }}
+    alb.ingress.kubernetes.io/scheme: internet-facing
+    alb.ingress.kubernetes.io/target-type: ip
+    alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80}, {"HTTPS": 443}]'
+    alb.ingress.kubernetes.io/backend-protocol: HTTP
+    {{- if .Values.httpBasicAuth.enabled }}
+    alb.ingress.kubernetes.io/auth-type: basic
+    alb.ingress.kubernetes.io/auth-secret: {{ $fullName }}-http-basic-auth-users-list
+    alb.ingress.kubernetes.io/auth-scope: "/"
+    alb.ingress.kubernetes.io/auth-realm: "Authentication Required"
+    {{- end }}
+  {{- else if eq .Values.ingress.controller "traefik" }}
+    {{- with .Values.ingress.annotations }}
+      {{- toYaml . | nindent 4 }}
+    {{- end }}
+    {{- if .Values.httpBasicAuth.enabled }}
+      {{- $middlewares = append $middlewares (printf "%s-%s-http-basic-auth@kubernetescrd" .Release.Namespace $fullName) }}
+    {{- end }}
+    {{- if .Values.httpWwwRedirect.enabled }}
+      {{- $middlewares = append $middlewares (printf "%s-%s-http-www-redirect@kubernetescrd" .Release.Namespace $fullName) }}
+    {{- end }}
+    {{- if ne (len $middlewares) 0 }}
+    traefik.ingress.kubernetes.io/router.middlewares: {{ join ", " $middlewares }}
+    {{- end }}
+  {{- end }}
+spec:
+  ingressClassName: {{ .Values.ingress.ingressClassName }}
+  {{- if .Values.service.tls.enabled }}
+  tls:
+    - hosts:
+      {{- range .Values.ingress.hosts }}
+        - {{ . | quote }}
+      {{- end }}
+      secretName: {{ $fullName }}-tls
+  {{- end }}
+  rules:
+    {{- range .Values.ingress.hosts }}
+    - host: {{ . | quote }}
+      http:
+        paths:
+          - backend:
+              service:
+                name: {{ $fullName }}
+                port:
+                  name: http
+            path: /
+            pathType: ImplementationSpecific
+    {{- end }}
+{{- end }}

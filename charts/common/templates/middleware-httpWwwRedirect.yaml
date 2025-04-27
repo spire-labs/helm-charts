@@ -1,0 +1,13 @@
+{{- if and .Values.httpWwwRedirect.enabled (eq .Values.ingress.controller "traefik") }}
+{{- $fullName := include "common.fullname" . -}}
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: Middleware
+metadata:
+  name: {{ $fullName }}-http-www-redirect
+spec:
+  redirectRegex:
+    permanent: true
+    regex: "^(https?)://(www\\.)?(.*)"
+    replacement: "https://$3"
+{{- end }}

@@ -1,0 +1,28 @@
+{{- if .Values.httpBasicAuth.enabled }}
+{{- $fullName := include "common.fullname" . -}}
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: {{ $fullName }}-http-basic-auth-users-list
+type: Opaque
+stringData:
+  {{- if eq .Values.ingress.controller "alb" }}
+  auth: |
+  {{- else }}
+  users: |
+  {{- end }}
+  {{- range $index, $item := split "," .Values.httpBasicAuth.usersList }}
+    {{ $item }}
+  {{- end }}
+{{- if and .Values.httpBasicAuth.enabled (eq .Values.ingress.controller "traefik") }}
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: Middleware
+metadata:
+  name: {{ $fullName }}-http-basic-auth
+spec:
+  basicAuth:
+    secret: {{ $fullName }}-http-basic-auth-users-list
+{{- end }}
+{{- end }}

@@ -1,0 +1,320 @@
+replicaCount: 1
+
+service:
+#  enabled: true
+#  name: ""
+#  port: 80
+#  type: ClusterIP
+#  containerPort: 5000
+#  tls:
+#    enabled: false
+#    issuerName: ""
+
+deployment:
+  enabled: true
+  initContainers: []
+  #   - name: db-migration
+  #     image: "migration-image:latest"
+  #     command:
+  #       - "migration-command"
+  #     args:
+  #       - "argument-1"
+  #       - "argument-2"
+  #     env:
+  #       DB_CONNECTION_STRING:
+  #         type: "kv"
+  #         value: "database-connection-string"
+  #       SECRET_KEY:
+  #         type: "parameterStore"
+  #         name: "secret-key-name"
+  #       CONFIG_VALUE:
+  #         type: "configmapRef"
+  #         name: "configmap-name"
+  #         key: "config-key"
+  volumes: []
+#    - name: data
+#      mountPath: /data
+#      provisioner: ebs.csi.aws.com
+#      annotations:
+#        storageclass.kubernetes.io/some-annotation: "some-value"
+#      bindingMode: WaitForFirstConsumer
+#      accessModes:
+#        - ReadWriteOnce
+#      parameters:
+#         type: gp3
+#      reclaimPolicy: Retain # default Delete
+#      resources:
+#        requests:
+#          storage: 4Gi
+#      If set to "-", results in storageClassName: "", which disables dynamic provisioning of volume
+#      storageClass: "-"
+#
+#    - name: config
+#      mountPath: /config
+#      provisioner: ebs.csi.aws.com
+#      annotations:
+#        storageclass.kubernetes.io/some-annotation: "some-value"
+#      bindingMode: WaitForFirstConsumer
+#      accessModes:
+#        - ReadWriteOnce
+#      parameters:
+#         type: gp3
+#      reclaimPolicy: Retain # default Delete
+#      resources:
+#        requests:
+#          storage: 4Gi
+#
+#    - name: shared
+#      mountPath: /shared
+#      provisioner: efs.csi.aws.com
+#      annotations:
+#        storageclass.kubernetes.io/some-annotation: "some-value"
+#      accessModes:
+#        - ReadWriteMany
+#      parameters:
+#        provisioningMode: efs-ap
+#        fileSystemId: fs-12345678
+#        directoryPerms: "700"
+#        gidRangeStart: "1000" # optional
+#        gidRangeEnd: "2000" # optional
+#        basePath: "/dynamic_provisioning" # optional
+#      reclaimPolicy: Retain # default Delete
+#      resources:
+#        requests:
+#          storage: 4Gi
+
+cronjob:
+  enabled: false
+  jobs: []
+#    - name: job-name-one
+#      securityContext:
+#        runAsUser: 1000
+#        runAsGroup: 1000
+#        fsGroup: 2000
+#      image:
+#        repository: job-image
+#        tag: latest
+#        imagePullPolicy: Always
+#        imagePullSecrets:
+#          - name: myregistrykey
+#      # optional env vars
+#      env:
+#      - name: FIRST_VAR
+#        value: "env var value"
+#      envFrom:
+#      - secretRef:
+#          name: secret_data
+#      - configMapRef:
+#          name: config_data
+#      schedule: "* * * * *"
+#      command: ["/bin/sh"]
+#      args:
+#        - "-c"
+#        - "echo $(date) - loaded env var $FIRST_VAR"
+#        - "echo $(date) - loaded secret $secret_data"
+#        - "echo $(date) - loaded config $config_data"
+#      serviceAccount:
+#        name: "job-name-one-serviceaccount"
+#      resources:
+#        limits:
+#          cpu: 50m
+#          memory: 256Mi
+#        requests:
+#          cpu: 50m
+#          memory: 256Mi
+#      failedJobsHistoryLimit: 1
+#      successfulJobsHistoryLimit: 3
+#      concurrencyPolicy: Forbid
+#      restartPolicy: Never
+#      backoffLimit: 2
+#      nodeSelector:
+#        type: infra
+#      tolerations:
+#      - effect: NoSchedule
+#        operator: Exists
+#      affinity:
+#        nodeAffinity:
+#          requiredDuringSchedulingIgnoredDuringExecution:
+#            nodeSelectorTerms:
+#            - matchExpressions:
+#              - key: kubernetes.io/e2e-az-name
+#                operator: In
+#                values:
+#                - e2e-az1
+#                - e2e-az2
+sidecars: []
+#  - name: long-running-sidecar-container
+#    image:
+#      repository: python
+#      tag: 3-alpine
+#    ports:
+#    - name: http
+#      containerPort: 80
+#    - name: metrics
+#      containerPort: 8081
+#      protocol: TCP
+#    env:
+#     FIRST_ENV_VAR:
+#       type: kv
+#       value: value-1
+#     SECOND_ENV_VAR:
+#       type: kv
+#       value: value-2
+#    args:
+#      - some-argument
+#    resources:
+#      limits:
+#        cpu: 250m
+#        memory: 1024Mi
+#      requests:
+#        cpu: 100m
+#        memory: 512Mi
+#    restartPolicy: Always
+image:
+  repository: organization/name
+  pullPolicy: IfNotPresent
+  tag: "latest"
+
+command: []
+# - /bin/sh
+args: []
+# - -c
+# - echo Hello, World!
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+livenessProbe: {}
+readinessProbe: {}
+
+serviceAccount:
+  create: false
+  annotations:
+    # eks.amazonaws.com/role-arn: arn:aws:iam::1234567890:role/name
+  rules: []
+#    - apiGroups: ["batch"]
+#      resources: ["jobs"]
+#      verbs: ["get", "list", "create", "delete", "watch"]
+#    - apiGroups: [""]
+#      resources: ["pods"]
+#      verbs: ["get", "list", "watch"]
+#    - apiGroups: [""]
+#      resources: ["pods/log"]
+#      verbs: ["get"]
+
+podAnnotations: {}
+
+podSecurityContext:
+  {}
+  # fsGroup: 2000
+
+securityContext:
+  {}
+  # capabilities:
+  #   drop:
+  #   - ALL
+  # readOnlyRootFilesystem: true
+  # runAsNonRoot: true
+  # runAsUser: 1000
+
+ingress: {}
+#  enabled: false
+#  controller: traefik  # or "alb"
+#  ingressClassName: traefik # or "alb"
+#  annotations:
+#    {}
+#    # kubernetes.io/ingress.class: nginx
+#    # kubernetes.io/tls-acme: "true"
+#  hosts:
+#    - example.com
+#    - www.example.com
+
+# If enabled will create Traefik Middleware and apply to Ingress
+# to redirect http to https and www to non-www
+httpWwwRedirect:
+  enabled: false
+
+httpBasicAuth:
+  enabled: false
+
+resources:
+  {}
+
+  # It is usually recommended to not specify default resources and to leave this as a conscious
+  # choice for the user. This also increases chances charts run on environments with little
+  # resources, such as Minikube. If you do want to specify resources, uncomment the following
+  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+  # limits:
+  #   cpu: 100m
+  #   memory: 128Mi
+  # requests:
+  #   cpu: 100m
+  #   memory: 128Mi
+
+autoscaling:
+  {}
+  # enabled: false
+  # minReplicas: 2
+  # maxReplicas: 6
+  # targetCPUUtilizationPercentage: 80
+  # targetMemoryUtilizationPercentage: 80
+  # scaleUp:
+  #   stabilizationWindowSeconds: 30
+  #   policyType: pod
+  #   value: 6
+  #   periodSeconds: 30
+  # scaleDown:
+  #   stabilizationWindowSeconds: 300
+  #   policyType: pod
+  #   value: 2
+  #   periodSeconds: 30
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
+
+externalSecrets: {}
+#  clusterSecretStoreName: ""
+
+env:
+# env:
+#   DB_NAME:
+#     type: kv
+#     value: example-db
+#   DB_USER_NAME:
+#     type: kv
+#     value: example
+#   DB_USER_PASSWORD:
+#     type: parameterStore
+#     name: example-db
+#     parameter_name: DB_PASSWORD
+
+serviceMonitor:
+  enabled: false
+  # The label used by the Prometheus Operator to discover ServiceMonitors
+  additionalLabels: {}
+    # release: prometheus-operator
+  # Namespace where ServiceMonitor resource will be created
+  namespace: ""
+  # Interval at which metrics should be scraped
+  interval: 30s
+  # Timeout for scraping
+  scrapeTimeout: 10s
+  # The path at which metrics are exposed
+  path: /metrics
+  # The port name or number to scrape metrics from
+  port: metrics
+  # Additional relabeling configurations
+  relabelings: []
+  # Additional metric relabeling configurations
+  metricRelabelings: []
+  # Scheme to use for scraping
+  scheme: http
+  # TLS configuration for scraping
+  tlsConfig: {}
+    # insecureSkipVerify: true
+  # Additional ServiceMonitor specifications
+  spec: {}
