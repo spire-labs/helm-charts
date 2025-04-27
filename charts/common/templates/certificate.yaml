@@ -1,4 +1,4 @@
-{{- if and .Values.service.enabled .Values.service.tls.enabled }}
+{{- if and (hasKey .Values "service") (hasKey .Values.service "tls") .Values.service.enabled .Values.service.tls.enabled }}
 {{- $fullName := include "common.fullname" . -}}
 apiVersion: cert-manager.io/v1
 kind: Certificate
