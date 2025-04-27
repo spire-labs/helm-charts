@@ -49,4 +49,4 @@ spec:
   {{- with .Values.serviceMonitor.spec }}
   {{- toYaml . | nindent 2 }}
   {{- end }}
-{{- end }} 
+{{- end }}
