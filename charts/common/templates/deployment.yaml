@@ -38,14 +38,14 @@ spec:
           image: {{ .image }}
           {{- if .command }}
           command:
-            {{ toYaml .command | nindent 12 }}
+            {{- toYaml .command | nindent 12 }}
           {{- end }}
           {{- if .restartPolicy }}
           restartPolicy: {{ .restartPolicy }}
           {{- end }}
           {{- if .args }}
           args:
-            {{ toYaml .args | nindent 12 }}
+            {{- toYaml .args | nindent 12 }}
           {{- end }}
           {{- if .env }}
           env:
@@ -66,6 +66,13 @@ spec:
             {{- end }}
             {{- end }}
           {{- end }}
+          {{- if .volumeMounts }}
+          volumeMounts:
+            {{- range $mount := .volumeMounts }}
+            - name: {{ $mount.name }}
+              mountPath: {{ $mount.mountPath }}
+            {{- end }}
+          {{- end }}
         {{- end }}
       {{- end }}
       {{- with .Values.imagePullSecrets }}
@@ -80,9 +87,24 @@ spec:
       {{- if .Values.deployment.volumes }}
       volumes:
         {{- range $volume := .Values.deployment.volumes }}
+        {{- if eq $volume.type "pvc" }}
         - name: {{ $fullName }}-{{ $volume.name }}-volume
           persistentVolumeClaim:
             claimName: {{ $fullName }}-{{ $volume.name }}-pvc
+        {{- else if eq $volume.type "secret" }}
+        - name: {{ $volume.name }}
+          secret:
+            secretName: {{ $volume.secretName | quote }}
+            defaultMode: {{ $volume.defaultMode | default 420 }}
+        {{- else if eq $volume.type "configMap" }}
+        - name: {{ $volume.name }}
+          configMap:
+            name: {{ $volume.configMapName | quote }}
+            defaultMode: {{ $volume.defaultMode | default 420 }}
+        {{- else if eq $volume.type "emptyDir" }}
+        - name: {{ $volume.name }}
+          emptyDir: {}
+        {{- end }}
         {{- end }}
       {{- end }}
       containers:
@@ -90,22 +112,30 @@ spec:
           securityContext:
             {{- toYaml .Values.securityContext | nindent 12 }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
           {{- if .Values.deployment.volumes }}
           volumeMounts:
             {{- range $volume := .Values.deployment.volumes }}
+            {{- if eq $volume.type "pvc" }}
             - name: {{ $fullName }}-{{ $volume.name }}-volume
               mountPath: {{ $volume.mountPath }}
+            {{- else }}
+            - name: {{ $volume.name }}
+              mountPath: {{ $volume.mountPath }}
+              {{- if $volume.readOnly }}
+              readOnly: {{ $volume.readOnly }}
+              {{- end }}
+            {{- end }}
             {{- end }}
           {{- end }}
           {{- if .Values.command }}
           command:
-            {{ toYaml .Values.command | nindent 12 }}
+            {{- toYaml .Values.command | nindent 12 }}
           {{- end }}
           {{- if .Values.args }}
           args:
-            {{ toYaml .Values.args | nindent 12 }}
+            {{- toYaml .Values.args | nindent 12 }}
           {{- end }}
-          imagePullPolicy: {{ .Values.image.pullPolicy }}
           {{- if .Values.service.containerPort }}
           ports:
             - name: http
@@ -116,7 +146,7 @@ spec:
             {{- range .Values.deployment.ports }}
             - name: {{ .name }}
               containerPort: {{ .containerPort }}
-              protocol: {{ .protocol }}
+              protocol: {{ .protocol | default "TCP" }}
             {{- end }}
           {{- end }}
           env:
@@ -151,6 +181,7 @@ spec:
         {{- range .Values.sidecars }}
         - name: {{ .name }}
           image: "{{ .image.repository }}:{{ .image.tag }}"
+          imagePullPolicy: {{ .image.pullPolicy | default "IfNotPresent" }}
           {{- if .volumeMounts }}
           volumeMounts:
             {{- range .volumeMounts }}
