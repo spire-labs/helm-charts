@@ -1,28 +1,30 @@
 {{- if .Values.deployment.volumes }}
 {{- $fullName := include "common.fullname" . -}}
 {{- range $volume := .Values.deployment.volumes }}
+{{- if eq $volume.type "pvc" }}
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: {{ $fullName }}-{{ $volume.name }}-pvc
-  {{- with .annotations }}
+  {{- with $volume.annotations }}
   annotations:
   {{ toYaml . | indent 4 }}
   {{- end }}
 spec:
-  {{- with .accessModes }}
+  {{- with $volume.accessModes }}
   accessModes:
   {{ toYaml . | indent 4 }}
   {{- end }}
-  {{- if (eq "-" .storageClass) }}
+  {{- if (eq "-" $volume.storageClass) }}
   storageClassName: ""
   {{- else }}
   storageClassName: {{ $fullName }}-{{ $volume.name }}-sc
   {{- end }}
-  {{- if .resources }}
+  {{- if $volume.resources }}
   resources:
-    {{- toYaml .resources | nindent 4 }}
+    {{- toYaml $volume.resources | nindent 4 }}
   {{- end }}
+{{- end }}
 {{- end }}
 {{- end }}
