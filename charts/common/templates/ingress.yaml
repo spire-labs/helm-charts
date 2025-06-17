@@ -46,6 +46,17 @@ spec:
     - host: {{ . | quote }}
       http:
         paths:
+          {{- if $.Values.ingress.paths }}
+          {{- range $.Values.ingress.paths }}
+          - backend:
+              service:
+                name: {{ $fullName }}
+                port:
+                  name: {{ .portName | default "http" }}
+            path: {{ .path }}
+            pathType: {{ .pathType | default "Prefix" }}
+          {{- end }}
+          {{- else }}
           - backend:
               service:
                 name: {{ $fullName }}
@@ -53,5 +64,6 @@ spec:
                   name: http
             path: /
             pathType: ImplementationSpecific
+          {{- end }}
     {{- end }}
 {{- end }}
