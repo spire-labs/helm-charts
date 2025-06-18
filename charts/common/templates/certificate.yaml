@@ -1,11 +1,14 @@
 {{- if and (hasKey .Values "service") (hasKey .Values.service "tls") .Values.service.enabled .Values.service.tls.enabled }}
 {{- $fullName := include "common.fullname" . -}}
+
+{{- /* Only create certificate if explicitly enabled for this app */ -}}
+{{- if .Values.service.tls.createCertificate | default true }}
 apiVersion: cert-manager.io/v1
 kind: Certificate
 metadata:
-  name: {{ $fullName }}
+  name: {{ .Values.service.tls.certificateName | default $fullName }}
 spec:
-  secretName: {{ $fullName }}-tls
+  secretName: {{ .Values.service.tls.secretName | default (printf "%s-tls" $fullName) }}
   duration: 2160h
   renewBefore: 720h
   issuerRef:
@@ -15,4 +18,5 @@ spec:
   {{- range .Values.ingress.hosts }}
     - {{ . | quote }}
   {{- end }}
+{{- end }}
 {{- end }}
