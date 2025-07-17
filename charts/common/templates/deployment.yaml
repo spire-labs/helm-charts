@@ -53,7 +53,7 @@ spec:
             - name: {{ $k | quote }}
             {{- if eq $v.type "kv" }}
               value: {{ $v.value | quote }}
-            {{- else if eq $v.type "parameterStore" }}
+            {{- else if or (eq $v.type "parameterStore") (eq $v.type "secretsManager") }}
               valueFrom:
                 secretKeyRef:
                   name: "{{ $fullName }}-{{ $v.name }}"
@@ -91,7 +91,7 @@ spec:
         - name: {{ $fullName }}-{{ $volume.name }}-volume
           persistentVolumeClaim:
             claimName: {{ $fullName }}-{{ $volume.name }}-pvc
-        {{- else if eq $volume.type "secret" }}
+        {{- else if or (eq $volume.type "secret") (eq $volume.type "secretsManager") }}
         - name: {{ $volume.name }}
           secret:
             secretName: {{ $volume.secretName | quote }}
@@ -215,7 +215,7 @@ spec:
             - name: {{ $k | quote }}
               {{- if eq $v.type "kv" }}
               value: {{ $v.value | quote }}
-              {{- else if eq $v.type "parameterStore" }}
+              {{- else if or (eq $v.type "parameterStore") (eq $v.type "secretsManager") }}
               valueFrom:
                 secretKeyRef:
                   name: "{{ $fullName }}-{{ $v.name }}"
