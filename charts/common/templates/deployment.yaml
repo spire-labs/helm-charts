@@ -96,6 +96,11 @@ spec:
           secret:
             secretName: {{ $volume.secretName | quote }}
             defaultMode: {{ $volume.defaultMode | default 420 }}
+            {{- if $volume.filePath }}
+            items:
+              - key: {{ $volume.secretName | quote }}
+                path: {{ $volume.filePath }}
+            {{- end }}
         {{- else if eq $volume.type "configMap" }}
         - name: {{ $volume.name }}
           configMap:
