@@ -122,6 +122,9 @@ spec:
             {{- else }}
             - name: {{ $volume.name }}
               mountPath: {{ $volume.mountPath }}
+              {{- if $volume.subPath }}
+              subPath: {{ $volume.subPath }}
+              {{- end }}
               {{- if $volume.readOnly }}
               readOnly: {{ $volume.readOnly }}
               {{- end }}
