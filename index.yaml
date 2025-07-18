@@ -2,6 +2,17 @@ apiVersion: v1
 entries:
   common:
   - apiVersion: v2
+    appVersion: 1.1.7
+    created: "2025-07-18T18:16:20.29439521Z"
+    description: A Helm chart for deploying common apps to Kubernetes
+    digest: ab59157e693563253875cb891f1e8e30fa4f2387763572c4d680546713b34182
+    icon: https://cncf-branding.netlify.app/img/projects/helm/horizontal/color/helm-horizontal-color.png
+    name: common
+    type: application
+    urls:
+    - https://github.com/spire-labs/helm-charts/releases/download/common-1.1.7/common-1.1.7.tgz
+    version: 1.1.7
+  - apiVersion: v2
     appVersion: 1.1.6
     created: "2025-07-18T17:52:00.752737506Z"
     description: A Helm chart for deploying common apps to Kubernetes
@@ -155,4 +166,4 @@ entries:
     urls:
     - https://github.com/spire-labs/helm-charts/releases/download/common-1.0.1/common-1.0.1.tgz
     version: 1.0.1
-generated: "2025-07-18T17:52:00.7528352Z"
+generated: "2025-07-18T18:16:20.294510516Z"
