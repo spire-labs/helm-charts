@@ -1,7 +1,7 @@
 {{- if .Values.deployment.volumes }}
 {{- $fullName := include "common.fullname" . -}}
 {{- range $volume := .Values.deployment.volumes }}
-{{- if eq $volume.type "pvc" }}
+{{- if and (eq $volume.type "pvc") (ne $volume.storageClass "-") }}
 ---
 apiVersion: storage.k8s.io/v1
 kind: StorageClass
