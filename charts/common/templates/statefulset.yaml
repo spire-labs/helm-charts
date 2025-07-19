@@ -165,6 +165,13 @@ spec:
             - name: http
               containerPort: {{ .Values.service.containerPort }}
               protocol: TCP
+          {{- else if .Values.statefulset.ports }}
+          ports:
+            {{- range .Values.statefulset.ports }}
+            - name: {{ .name }}
+              containerPort: {{ .containerPort }}
+              protocol: {{ .protocol | default "TCP" }}
+            {{- end }}
           {{- else if .Values.deployment.ports }}
           ports:
             {{- range .Values.deployment.ports }}
