@@ -83,6 +83,18 @@ deployment:
 #        requests:
 #          storage: 4Gi
 
+configMap:
+  enabled: false
+  data: {}
+#    example.conf: |
+#      key=value
+#      another=value
+
+statefulset:
+  enabled: false
+  volumes: []
+  volumeClaimTemplates: []
+
 cronjob:
   enabled: false
   jobs: []
