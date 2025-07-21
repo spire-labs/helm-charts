@@ -9,10 +9,19 @@ spec:
   type: ClusterIP
   clusterIP: None
   ports:
+    {{- if .Values.service.port }}
     - port: {{ .Values.service.port }}
       targetPort: {{ .Values.service.containerPort | default "http" }}
       protocol: TCP
       name: http
+    {{- else if .Values.service.ports }} # If ports are defined for the service, use all of them
+    {{- range .Values.service.ports }}
+    - port: {{ .port }}
+      targetPort: {{ .targetPort }}
+      protocol: {{ .protocol }}
+      name: {{ .name }}
+    {{- end }}
+    {{- end }}
   selector:
     {{- include "common.selectorLabels" . | nindent 4 }}
 {{- end }}
