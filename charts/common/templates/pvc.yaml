@@ -1,6 +1,7 @@
-{{- if .Values.deployment.volumes }}
+{{- $volumes := concat (.Values.deployment.volumes | default list) (.Values.statefulset.volumes | default list) -}}
+{{- if $volumes }}
 {{- $fullName := include "common.fullname" . -}}
-{{- range $volume := .Values.deployment.volumes }}
+{{- range $volume := $volumes }}
 {{- if eq $volume.type "pvc" }}
 ---
 apiVersion: v1
@@ -16,8 +17,12 @@ spec:
   accessModes:
   {{ toYaml . | indent 4 }}
   {{- end }}
-  {{- if eq $volume.storageClass "-" }}
+  {{- if $volume.storageClass }}
+    {{- if eq $volume.storageClass "-" }}
   storageClassName: ""
+    {{- else }}
+  storageClassName: {{ $volume.storageClass }}
+    {{- end }}
   {{- else }}
   storageClassName: {{ $fullName }}-{{ $volume.name }}-sc
   {{- end }}
@@ -25,7 +30,11 @@ spec:
   resources:
     {{- toYaml $volume.resources | nindent 4 }}
   {{- end }}
+  {{- if $volume.volumeName }}
+  volumeName: {{ $volume.volumeName }}
+  {{ - else }}
   volumeName: {{ $fullName }}-{{ $volume.name }}-pvc
+  {{- end }}
 {{- end }}
 {{- end }}
 {{- end }}
