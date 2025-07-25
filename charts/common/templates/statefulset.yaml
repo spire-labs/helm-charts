@@ -23,7 +23,7 @@ spec:
   volumeClaimTemplates:
   {{- range $volume := .Values.statefulset.volumeClaimTemplates }}
   - metadata:
-      name: {{ $volume.name }}
+      name: {{ $fullName }}-{{ $volume.name }}
     spec:
       accessModes:
       {{- range $volume.accessModes }}
@@ -108,7 +108,11 @@ spec:
       {{- if .Values.statefulset.volumes }}
       volumes:
         {{- range $volume := .Values.statefulset.volumes }}
-        {{- if or (eq $volume.type "secret") (eq $volume.type "secretsManager") }}
+        {{- if eq $volume.type "pvc" }}
+        - name: {{ $fullName }}-{{ $volume.name }}-volume
+          persistentVolumeClaim:
+            claimName: {{ $fullName }}-{{ $volume.name }}-pvc
+        {{- else if or (eq $volume.type "secret") (eq $volume.type "secretsManager") }}
         - name: {{ $volume.name }}
           secret:
             secretName: {{ $volume.secretName | quote }}
@@ -137,11 +141,15 @@ spec:
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           volumeMounts:
             {{- range $volume := .Values.statefulset.volumeClaimTemplates }}
-            - name: {{ $volume.name }}
+            - name: {{ $fullName }}-{{ $volume.name }}
               mountPath: {{ $volume.mountPath }}
             {{- end }}
             {{- if .Values.statefulset.volumes }}
             {{- range $volume := .Values.statefulset.volumes }}
+            {{- if eq $volume.type "pvc" }}
+            - name: {{ $fullName }}-{{ $volume.name }}-volume
+              mountPath: {{ $volume.mountPath }}
+            {{- else }}
             - name: {{ $volume.name }}
               mountPath: {{ $volume.mountPath }}
               {{- if $volume.subPath }}
@@ -150,6 +158,7 @@ spec:
               {{- if $volume.readOnly }}
               readOnly: {{ $volume.readOnly }}
               {{- end }}
+            {{- end }}
             {{- end }}
             {{- end }}
           {{- if .Values.command }}
