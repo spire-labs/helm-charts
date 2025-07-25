@@ -3,5 +3,5 @@ name: common
 description: A Helm chart for deploying common apps to Kubernetes
 type: application
 version: 1.2.6
-appVersion: "1.2.6Ã"
+appVersion: "1.2.6"
 icon: https://cncf-branding.netlify.app/img/projects/helm/horizontal/color/helm-horizontal-color.png
