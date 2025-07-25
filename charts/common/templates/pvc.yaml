@@ -32,7 +32,7 @@ spec:
   {{- end }}
   {{- if $volume.volumeName }}
   volumeName: {{ $volume.volumeName }}
-  {{ - else }}
+  {{- else }}
   volumeName: {{ $fullName }}-{{ $volume.name }}-pvc
   {{- end }}
 {{- end }}
