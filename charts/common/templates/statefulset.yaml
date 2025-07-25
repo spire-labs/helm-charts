@@ -23,7 +23,7 @@ spec:
   volumeClaimTemplates:
   {{- range $volume := .Values.statefulset.volumeClaimTemplates }}
   - metadata:
-      name: {{ $fullName }}-{{ $volume.name }}
+      name: {{ $volume.name }}
     spec:
       accessModes:
       {{- range $volume.accessModes }}
@@ -141,13 +141,13 @@ spec:
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           volumeMounts:
             {{- range $volume := .Values.statefulset.volumeClaimTemplates }}
-            - name: {{ $fullName }}-{{ $volume.name }}
+            - name: {{ $volume.name }}
               mountPath: {{ $volume.mountPath }}
             {{- end }}
             {{- if .Values.statefulset.volumes }}
             {{- range $volume := .Values.statefulset.volumes }}
             {{- if eq $volume.type "pvc" }}
-            - name: {{ $fullName }}-{{ $volume.name }}-volume
+            - name: {{ $volume.name }}-volume
               mountPath: {{ $volume.mountPath }}
             {{- else }}
             - name: {{ $volume.name }}
