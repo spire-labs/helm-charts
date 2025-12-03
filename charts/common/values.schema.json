@@ -1,0 +1,41 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "properties": {
+    "env": {
+      "type": "object",
+      "description": "Environment variables for the application",
+      "additionalProperties": {
+        "type": "object",
+        "required": ["type"],
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": ["kv", "parameterStore", "secretsManager", "configmapRef"],
+            "description": "Environment variable source type"
+          },
+          "name": {
+            "type": "string",
+            "description": "Name for secret/configmap reference"
+          },
+          "value": {
+            "type": ["string", "number", "integer", "boolean"],
+            "description": "Direct value (for type: kv) - can be string, number, or boolean"
+          },
+          "parameter_name": {
+            "type": "string",
+            "description": "AWS Parameter Store path (for type: parameterStore)"
+          },
+          "secret_name": {
+            "type": "string",
+            "description": "AWS Secrets Manager secret name (for type: secretsManager)"
+          },
+          "key": {
+            "type": "string",
+            "description": "ConfigMap key (for type: configmapRef)"
+          }
+        }
+      }
+    }
+  }
+}

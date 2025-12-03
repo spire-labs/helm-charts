@@ -71,6 +71,7 @@ spec:
           {{- if .env }}
           env:
             {{- range $k, $v := .env }}
+            {{- include "common.validateEnvType" (dict "type" $v.type "name" $k) }}
             - name: {{ $k | quote }}
             {{- if eq $v.type "kv" }}
               value: {{ $v.value | quote }}
@@ -191,6 +192,7 @@ spec:
           {{- end }}
           env:
             {{- range $k, $v := .Values.env }}
+            {{- include "common.validateEnvType" (dict "type" $v.type "name" $k) }}
             - name: {{ $k | quote }}
             {{- if eq $v.type "kv" }}
               value: {{ $v.value | quote }}
@@ -243,6 +245,7 @@ spec:
           {{- if .env }}
           env:
             {{- range $k, $v := .env }}
+            {{- include "common.validateEnvType" (dict "type" $v.type "name" $k) }}
             - name: {{ $k | quote }}
               {{- if eq $v.type "kv" }}
               value: {{ $v.value | quote }}

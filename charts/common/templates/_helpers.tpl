@@ -61,3 +61,13 @@ Create the name of the service account to use
 {{- default "default" .Values.serviceAccount.name }}
 {{- end }}
 {{- end }}
+
+{{/*
+Validate env type - fails if type is not recognized
+*/}}
+{{- define "common.validateEnvType" -}}
+{{- $validTypes := list "kv" "parameterStore" "secretsManager" "configmapRef" -}}
+{{- if not (has .type $validTypes) -}}
+{{- fail (printf "Invalid env type '%s' for '%s'. Valid types: %s" .type .name ($validTypes | join ", ")) -}}
+{{- end -}}
+{{- end -}}
