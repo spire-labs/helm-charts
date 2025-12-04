@@ -19,7 +19,7 @@
             "description": "Name for secret/configmap reference"
           },
           "value": {
-            "type": ["string", "number", "integer", "boolean"],
+            "type": ["string", "number", "boolean"],
             "description": "Direct value (for type: kv) - can be string, number, or boolean"
           },
           "parameter_name": {
