@@ -1,0 +1,26 @@
+name: Test Charts
+
+on:
+  pull_request:
+    paths:
+      - "charts/**"
+      - ".github/workflows/helm-test.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install Helm
+        uses: azure/setup-helm@v3
+
+      - name: Lint common chart
+        run: helm lint charts/common --values charts/common/test-values.yaml
+
+      - name: Test ExternalSecret lifecycle rendering
+        run: charts/common/tests/external-secret-lifecycle.sh
