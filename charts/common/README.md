@@ -44,9 +44,12 @@ ownership check**; deletion can interrupt secret reconciliation.
    ```
 
 4. After that upgrade succeeds, Helm tracks the ExternalSecrets. Retained names
-   update in place; a later upgrade that renames or removes an entry prunes the
-   old ExternalSecret. The effect on the Kubernetes `Secret` managed by External
-   Secrets Operator remains subject to that ExternalSecret's deletion policy.
+   update in place without disrupting their generated Secrets. A later upgrade
+   that renames or removes an entry prunes the old ExternalSecret. With the
+   default `creationPolicy: Owner`, Kubernetes then removes its generated Secret
+   through owner garbage collection. `deletionPolicy: Retain` applies when the
+   provider value disappears; it does not preserve a Secret when its
+   ExternalSecret is deleted.
 
 ## Testing
 
